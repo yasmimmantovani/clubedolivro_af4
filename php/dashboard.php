@@ -1,0 +1,143 @@
+<?php 
+session_start();
+include('conexao.php');
+
+if (empty($_SESSION['id']) || empty($_SESSION['nivel']) || !in_array($_SESSION['nivel'], ['admin', 'funcionario'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$counts = [
+    'livros' => 0,
+    'clientes' => 0,
+];
+
+$res = $mysqli->query("select count(*) as c from livros");
+if ($res) {
+    $row = $res->fetch_assoc(); $counts['livros'] = (int)$row['c'];
+}
+
+$res = $mysqli->query("select count(*) as c from clientes");
+if($res) {
+    $row = $res->fetch_assoc(); $counts['clientes'] = (int)$row['c'];
+}
+
+$ultimos_livros = [];
+$res = $mysqli->query("select id_livro, titulo, autor, ano from livros order by data_cadastro desc limit 5");
+if ($res) {
+    while($r = $res->fetch_assoc()) $ultimos_livros[] = $r;
+}
+
+$ultimos_usuarios = [];
+$res = $mysqli->query("select id_clientes, nome, data_cadastro from clientes order by data_cadastro desc limit 5");
+if ($res) {
+    while($r = $res->fetch_assoc()) $ultimos_usuarios[] = $r;
+}
+?>
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard - BookLover</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <button class="sidebar-toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </button>
+        
+        <h1>BookLover</h1>
+
+        <div class="header-right">
+            <span class="user">Olá, <?= htmlspecialchars($_SESSION['nome']) ?> (<?= htmlspecialchars($_SESSION['nivel']) ?>)</span>
+            <a href="logout.php">Sair</a>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <nav>
+                <a href="dashboard.php" class="active">Visão Geral</a>
+                <a href="cadastrar_livro.php">Cadastrar Livro</a>
+                <a href="listar_livros.php">Listar Livros</a>
+                <a href="cadastro_usuarios.php">Cadastrar Clientes</a>
+                <a href="listar_usuarios.php">Listar Clientes</a>
+                <a href="emprestimos.php">Empréstimos</a>
+            </nav>
+        </aside>
+
+        <main>
+            <section class="cards">
+                <div class="card">
+                    <div class="card-tittle">Livros Cadastrados</div>
+                    <div class="card-value" id="cnt-livros"><?= $counts['livros'] ?></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-tittle">Clientes</div>
+                    <div class="card-value" id="cnt-clientes"><?= $counts['clientes'] ?></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-tittle">Ações Rápidas</div>
+                    <div class="card-actions">
+                        <a class="btn" href="cadastrar_livro.php">+ Cadastrar Livro</a>
+                        <a class="btn" href="cadastro_usuarios.php">+ Cadastrar Usuário</a>
+                        <a class="btn" href="gerar_relatorio.php?tipo=livros" target="_blank">Gerar PDF (Livros)</a>
+                        <a class="btn" href="export_csv.php?tipo=livros">Exportar CSV (Livros)</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts">
+                <div class="chart-card">
+                    <h3>Visão geral</h3>
+                    <canvas id="overviewChart" height="120"></canvas>
+                </div>
+            </section>
+
+            <section class="lists">
+                <div class="list-card">
+                    <h3>Últimos livros</h3>
+                    <?php if (empty($ultimos_livros)): ?>
+                        <p class="muted">Nenhum livro cadastrado ainda.</p>
+                    <?php else: ?>
+                        <ul>
+                            <?php foreach($ultimos_livros as $l): ?>
+                                <li><strong><?= htmlspecialchars($l['titulo']) ?></strong> — <?= htmlspecialchars($l['autor']) ?> (<?= htmlspecialchars($l['ano']) ?>)</li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+
+                <div class="list-card">
+                    <h3>Últimos clientes</h3>
+                    <?php if(empty($ultimos_usuarios)): ?>
+                        <p class="muted">Nenhum cliente cadastrado ainda.</p>
+                    <?php else: ?>
+                        <ul>
+                            <?php foreach($ultimos_usuarios as $u): ?>
+                                <li><?= htmlspecialchars($u['nome']) ?> — <?= htmlspecialchars($u['email']) ?> <span class="muted">(<?= htmlspecialchars($u['nivel']) ?>)</span></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+
+    <!-- Tema -->
+     <script src="../js/theme.js"></script>
+     <script src="../js/dashboard.js"></script>
+
+    <!-- Ion Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

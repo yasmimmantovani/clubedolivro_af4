@@ -62,8 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h1>BookLover</h1>
         <nav>
             <a href="../html/index.html">Início</a>
-            <a href="./index.html #destaque">Destaques</a>
-            <a href="#cadastro">Seja um lover</a>
+            <a href="../html/index.html#destaque">Destaques</a>
+            <a href="#cadastro">Seja um Lover</a>
         </nav>
 
         <div class="header-right">
@@ -102,6 +102,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <button type="submit" class="botao">Cadastrar</button>
         </form>
     </div>
+
+    <footer>
+        &copy; 2025 BookLover | Desenvolvido por Yasmim Mantovani
+        <p>Siga-nos:<br>
+            <a href="#"><ion-icon name="logo-instagram"></ion></a> 
+            <a href="#"><ion-icon name="logo-facebook"></ion-icon></a> 
+            <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+        </p>
+    </footer>
 
     <!-- Tema -->
      <script src="../js/theme.js"></script>

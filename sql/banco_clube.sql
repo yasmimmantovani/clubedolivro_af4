@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS clientes (
   id_clientes INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
-  endereco VARCHAR(255) NOT NULL
+  endereco VARCHAR(255) NOT NULL,
+  data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS livros (
   ano INT,
   genero VARCHAR(50),
   quantidade INT NOT NULL DEFAULT 1,
+  data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   disponibilidade ENUM('Disponível','Emprestado') DEFAULT 'Disponível'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

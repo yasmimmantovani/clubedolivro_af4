@@ -28,7 +28,7 @@
 }
 
 .modal button {
-    background: #8758ff;
+    background: #bd4678;
     border: none;
     padding: 10px 18px;
     color: #fff;
@@ -41,7 +41,6 @@
     opacity: 0.85;
 }
 
-/* Sucesso e erro opcionais */
 .modal.success {
     border-left: 5px solid #2ecc71;
 }
