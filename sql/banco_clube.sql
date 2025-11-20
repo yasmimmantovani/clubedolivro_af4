@@ -1,4 +1,5 @@
 create database clubelivro;
+use clubelivro;
 
 create table usuarios_adm (
     id int primary key auto_increment,
@@ -7,16 +8,14 @@ create table usuarios_adm (
     telefone varchar(20),
     senha  varchar(255) not null,
     nivel enum('admin', 'funcionario') default 'funcionario',
-    data_cadastro datetime now()
 );
 
 create table clientes (
-    id_clients int primary key auto_increment,
+    id_clientes int primary key auto_increment,
     nome varchar(100) not null,
     email varchar(100) not null,
-    senha varchar(255) not null,
-    
-)
+    endereco varchar(255) not null
+);
 
 create table livros (
     id_livro int primary key auto_increment,
@@ -35,6 +34,6 @@ create table emprestimos (
     data_emprestimo date not null,
     data_devolucao date,
     status enum('Ativo', 'Devolvido') default 'Ativo',
-    foreign key (id_clients) references clientes(id_clients) on delete cascade,
+    foreign key (id_clientes) references clientes(id_clientes) on delete cascade,
     foreign key (id_livro) references livros(id_livro) on delete cascade
 );
