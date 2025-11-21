@@ -29,9 +29,28 @@ if ($res) {
 }
 
 $ultimos_usuarios = [];
-$res = $mysqli->query("select id_clientes, nome, data_cadastro from clientes order by data_cadastro desc limit 5");
+$res = $mysqli->query("select id_clientes, nome, email, data_cadastro from clientes order by data_cadastro desc limit 5");
 if ($res) {
     while($r = $res->fetch_assoc()) $ultimos_usuarios[] = $r;
+}
+
+// Total de empréstimos
+$qtdEmprestimos = $mysqli->query("SELECT COUNT(*) AS total FROM emprestimos")->fetch_assoc()['total'];
+
+// Gêneros mais lidos
+$queryGenero = $mysqli->query("
+    SELECT l.genero, COUNT(e.id_emprestimo) AS total
+    FROM emprestimos e
+    JOIN livros l ON e.id_livro = l.id_livro
+    GROUP BY l.genero
+");
+
+$generos = [];
+$qtdPorGenero = [];
+
+while($g = $queryGenero->fetch_assoc()) {
+    $generos[] = $g['genero'];
+    $qtdPorGenero[] = $g['total'];
 }
 ?>
 
@@ -61,11 +80,9 @@ if ($res) {
     <div class="layout">
         <aside class="sidebar">
             <nav>
-                <a href="dashboard.php" class="active">Visão Geral</a>
-                <a href="cadastrar_livro.php">Cadastrar Livro</a>
-                <a href="listar_livros.php">Listar Livros</a>
-                <a href="cadastro_usuarios.php">Cadastrar Clientes</a>
-                <a href="listar_usuarios.php">Listar Clientes</a>
+                <a href="dashboard.php" class="active">Visão geral</a>
+                <a href="livros.php">Gerenciar livros</a>
+                <a href="clientes.php">Gerenciar clientes</a>
                 <a href="emprestimos.php">Empréstimos</a>
             </nav>
         </aside>
@@ -85,8 +102,8 @@ if ($res) {
                 <div class="card">
                     <div class="card-tittle">Ações Rápidas</div>
                     <div class="card-actions">
-                        <a class="btn" href="cadastrar_livro.php">+ Cadastrar Livro</a>
-                        <a class="btn" href="cadastro_usuarios.php">+ Cadastrar Usuário</a>
+                        <a class="btn" href="livros.php">+ Cadastrar Livro</a>
+                        <a class="btn" href="clientes.php">+ Cadastrar cliente</a>
                         <a class="btn" href="gerar_relatorio.php?tipo=livros" target="_blank">Gerar PDF (Livros)</a>
                         <a class="btn" href="export_csv.php?tipo=livros">Exportar CSV (Livros)</a>
                     </div>
@@ -121,7 +138,7 @@ if ($res) {
                     <?php else: ?>
                         <ul>
                             <?php foreach($ultimos_usuarios as $u): ?>
-                                <li><?= htmlspecialchars($u['nome']) ?> — <?= htmlspecialchars($u['email']) ?> <span class="muted">(<?= htmlspecialchars($u['nivel']) ?>)</span></li>
+                                <li><?= htmlspecialchars($u['nome']) ?> — <?= htmlspecialchars($u['email']) ?> — <?= htmlspecialchars($u['data_cadastro']) ?></span></li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
@@ -131,7 +148,12 @@ if ($res) {
     </div>
 
 
+    <script>
+        const qtdEmprestimos = <?= $qtdEmprestimos ?>;
 
+        const generos = <?= json_encode($generos) ?>;
+        const qtdGenero = <?= json_encode($qtdPorGenero) ?>;
+    </script>
     <!-- Tema -->
      <script src="../js/theme.js"></script>
      <script src="../js/dashboard.js"></script>

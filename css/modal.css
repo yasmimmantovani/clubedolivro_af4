@@ -48,3 +48,66 @@
 .modal.error {
     border-left: 5px solid #e74c3c;
 }
+
+/* Fundo escuro do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Caixa do modal */
+.modal-box {
+    background: #fff;
+    padding: 22px 28px;
+    border-radius: 8px;
+    width: 350px;
+    text-align: center;
+    animation: fadeScale 0.2s ease;
+}
+
+/* Botões */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-danger {
+    background: #d9534f;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #ccc;
+    color: black;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-danger:hover { background: #c9302c; }
+.btn-secondary:hover { background: #b3b3b3; }
+
+/* Animação */
+@keyframes fadeScale {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
