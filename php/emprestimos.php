@@ -126,6 +126,10 @@ $dados = $mysqli->query($sql);
         <h1>BookLover</h1>
 
         <div class="header-right">
+            <button class="tema" id="tema">
+                <ion-icon name="moon-outline"></ion-icon>
+            </button>
+
             <span class="user">Olá, <?= htmlspecialchars($_SESSION['nome']) ?> (<?= htmlspecialchars($_SESSION['nivel']) ?>)</span>
             <a href="logout.php">Sair</a>
         </div>

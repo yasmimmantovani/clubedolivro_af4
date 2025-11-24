@@ -84,6 +84,10 @@ $dados = $mysqli->query($sql);
         <h1>BookLover</h1>
 
         <div class="header-right">
+            <button class="tema" id="tema">
+                <ion-icon name="moon-outline"></ion-icon>
+            </button>
+
             <span class="user">Olá, <?= htmlspecialchars($_SESSION['nome']) ?> (<?= htmlspecialchars($_SESSION['nivel']) ?>)</span>
             <a href="logout.php">Sair</a>
         </div>
@@ -121,7 +125,7 @@ $dados = $mysqli->query($sql);
                 <input type="text" name="logradouro" id="logradouro" class="input" required value="<?= $edit['logradouro'] ?? '' ?>">
 
                 <label>Número:</label>
-                <input type="text" name="numero" class="input" required value="<?= $edit['numero'] ?? '' ?>">
+                <input type="number" name="numero" class="input" required value="<?= $edit['numero'] ?? '' ?>">
 
                 <label>Complemento:</label>
                 <input type="text" name="complemento" class="input" placeholder="Ex.: Casa, Apartamento..." value="<?= $edit['complemento'] ?? '' ?>">

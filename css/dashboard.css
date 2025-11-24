@@ -53,6 +53,32 @@ header h1 {
     font-weight: 600;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.tema {
+    background: none;
+    color: var(--texto2);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.tema ion-icon:hover {
+    transform: rotate(20deg) scale(1.05);
+}
+
+.tema ion-icon {
+    font-size: 22px;
+}
+
 /* Botão hambúrguer */
 .sidebar-toggle {
     display: none;

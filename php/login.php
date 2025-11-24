@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </nav>
 
     <div class="header-right">
-        <button id="tema">
+        <button class="tema" id="tema">
             <ion-icon name="moon-outline"></ion-icon>
         </button>
     </div>

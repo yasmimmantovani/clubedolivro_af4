@@ -72,7 +72,7 @@ nav a:hover {
 }
 
 /* Botão modo escuro */
-#tema {
+.tema {
     background: none;
     color: var(--texto2);
     border: none;
@@ -81,18 +81,14 @@ nav a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--texto2);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
     transition: all 0.3s ease;
 }
 
-#tema ion-icon:hover {
+.tema ion-icon:hover {
     transform: rotate(20deg) scale(1.05);
 }
 
-#tema ion-icon {
+.tema ion-icon {
     font-size: 22px;
 }
 
