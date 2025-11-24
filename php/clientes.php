@@ -117,22 +117,22 @@ $dados = $mysqli->query($sql);
                 <input type="text" name="cep" id="cep" class="input" placeholder="Ex.:12345-0000" required maxlength="9" value="<?= $edit['cep'] ?? '' ?>">
 
                 <label>Logradouro:</label>
-                <input type="text" name="logradouro" id="logradouro" required value="<?= $edit['logradouro'] ?? '' ?>">
+                <input type="text" name="logradouro" id="logradouro" class="input" required value="<?= $edit['logradouro'] ?? '' ?>">
 
                 <label>Número:</label>
-                <input type="text" name="numero" id="numero" required value="<?= $edit['numero'] ?? '' ?>">
+                <input type="text" name="numero" class="input" required value="<?= $edit['numero'] ?? '' ?>">
 
                 <label>Complemento:</label>
-                <input type="text" name="complemento" id="complemento" placeholder="Ex.: Casa, Apartamento..." value="<?= $edit['complemento'] ?? '' ?>">
+                <input type="text" name="complemento" class="input" placeholder="Ex.: Casa, Apartamento..." value="<?= $edit['complemento'] ?? '' ?>">
 
                 <label>Bairro:</label>
-                <input type="text" name="bairro" id="bairro" required value="<?= $edit['bairro'] ?? '' ?>">
+                <input type="text" name="bairro" id="bairro" class="input" required value="<?= $edit['bairro'] ?? '' ?>">
 
                 <label>Cidade:</label>
-                <input type="text" name="cidade" id="cidade" required value="<?= $edit['cidade'] ?? '' ?>">
+                <input type="text" name="cidade" id="cidade" class="input" required value="<?= $edit['cidade'] ?? '' ?>">
 
                 <label>Estado:</label>
-                <input type="text" name="estado" id="estado" required value="<?= $edit['estado'] ?? '' ?>">
+                <input type="text" name="estado" id="estado" class="input" required value="<?= $edit['estado'] ?? '' ?>">
 
 
                 <button type="submit" class="btn-submit"><?= $edit ? "Salvar Alterações" : "Cadastrar" ?></button>
