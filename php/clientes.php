@@ -71,6 +71,7 @@ $dados = $mysqli->query($sql);
   <title>Clientes - BookLover</title>
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/modal.css">
+  <link rel="shortcut icon" href="../img/pngegg.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
