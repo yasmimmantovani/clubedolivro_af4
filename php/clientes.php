@@ -148,7 +148,13 @@ $dados = $mysqli->query($sql);
                     <th>ID</th>
                     <th>Nome</th>
                     <th>E-mail</th>
-                    <th>Endereço</th>
+                    <th>Cep</th>
+                    <th>Logradouro</th>
+                    <th>Número</th>
+                    <th>Complemento</th>
+                    <th>Bairro</th>
+                    <th>Cidade</th>
+                    <th>Estado</th>
                     <th>Ações</th>
                 </tr>
 
@@ -157,7 +163,13 @@ $dados = $mysqli->query($sql);
                         <td><?= $l['id_clientes'] ?></td>
                         <td><?= $l['nome'] ?></td>
                         <td><?= $l['email'] ?></td>
-                        <td><?= $l['endereco'] ?></td>
+                        <td><?= $l['cep'] ?></td>
+                        <td><?= $l['logradouro'] ?></td>
+                        <td><?= $l['numero'] ?></td>
+                        <td><?= $l['complemento'] ?></td>
+                        <td><?= $l['bairro'] ?></td>
+                        <td><?= $l['cidade'] ?></td>
+                        <td><?= $l['estado'] ?></td>
                         <td class="table-actions">
                             <a class="action-btn" href="clientes.php?edit=<?= $l['id_clientes'] ?>">Editar</a>
                             <a class="action-btn" href="clientes.php?del=<?= $l['id_clientes'] ?>" onclick="return confirmarExclusao(<?= $l['id_clientes'] ?>);">Excluir</a>

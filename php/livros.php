@@ -9,22 +9,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ano = $_POST['ano'];
     $genero = $_POST['genero'];
     $quantidade = $_POST['quantidade'];
+    $arquivoCapa = null;
+
+    if (!empty($_FILES['capa']['name'])) {
+        $nomeArquivo = time() . "_" . $_FILES['capa']['name'];
+        $destino = "../uploads/" . $nomeArquivo;
+
+        if (!is_dir("../uploads")) {
+            mkdir("../uploads", 0777, true);
+        }
+
+        move_uploaded_file($_FILES['capa']['tmp_name'], $destino);
+
+        $arquivoCapa = $nomeArquivo;
+    }
 
     if (!empty($_POST['id_livro'])) {
         $id = $_POST['id_livro'];
-        $mysqli->query("update livros set
-                        titulo='$titulo',
-                        autor='$autor',
-                        ano='$ano',
-                        genero='$genero',
-                        quantidade='$quantidade'
-                        where id_livro=$id");
+
+        $sqlUpdate = "update livros set
+                      titulo='$titulo',
+                      autor='$autor',
+                      ano='$ano',
+                      genero='$genero',
+                      quantidade='$quantidade'";
+        
+        if ($arquivoCapa) {
+            $sqlUpdate .= ", capa='$arquivoCapa'";
+        }
+
+        $sqlUpdate .= " where id_livro=$id";
+
+        $mysqli->query($sqlUpdate);
     } else {
-        $mysqli->query("insert into livros(titulo, autor, ano, genero, quantidade)
-                        values('$titulo', '$autor', '$ano', '$genero', '$quantidade')");
+        $mysqli->query("INSERT INTO livros(titulo, autor, ano, genero, quantidade, capa)
+        VALUES ('$titulo', '$autor', '$ano', '$genero', '$quantidade', '$arquivoCapa')");
     }
+
     header("Location: livros.php");
     exit;
+
 }
 
 // Excluir
@@ -94,7 +118,7 @@ $dados = $mysqli->query($sql);
         <main class="main-content">
             <h2>Gerenciar livros</h2>
 
-            <form method="POST" class="form-card">
+            <form method="POST" class="form-card" enctype="multipart/form-data">
                 <input type="hidden" name="id_livro" class="input" value="<?= $edit['id_livro'] ?? '' ?>">
 
                 <label>Título:</label>
@@ -104,13 +128,16 @@ $dados = $mysqli->query($sql);
                 <input type="text" name="autor" class="input" required value="<?= $edit['autor'] ?? '' ?>">
 
                 <label>Ano:</label>
-                <input type="number" name="ano" class="input" required value="<?= $edit['ano'] ?? '' ?>">
+                <input type="text" name="ano" class="input" required value="<?= $edit['ano'] ?? '' ?>">
 
                 <label>Gênero:</label>
                 <input type="text" name="genero" class="input" required value="<?= $edit['genero'] ?? '' ?>">
 
                 <label>Quantidade:</label>
                 <input type="number" name="quantidade" class="input" required value="<?= $edit['quantidade'] ?? '' ?>">
+
+                <label>Capa do livro</label>
+                <input type="file" name="capa" class="input" accept="image/*">
 
                 <button type="submit" class="btn-submit"><?= $edit ? "Salvar Alterações" : "Cadastrar" ?></button>
             </form>
@@ -122,6 +149,7 @@ $dados = $mysqli->query($sql);
 
             <table border="1" width="100%" cellpadding="8">
                 <tr>
+                    <th>Capa</th>
                     <th>ID</th>
                     <th>Título</th>
                     <th>Autor</th>
@@ -133,6 +161,13 @@ $dados = $mysqli->query($sql);
 
                 <?php while($l = $dados->fetch_assoc()): ?>
                     <tr>
+                        <td>
+                        <?php if (!empty($l['capa'])): ?>
+                            <img src="../uploads/<?= $l['capa']; ?>" width="60">
+                        <?php else: ?>
+                            Sem capa 
+                        <?php endif; ?>
+                        </td>
                         <td><?= $l['id_livro'] ?></td>
                         <td><?= $l['titulo'] ?></td>
                         <td><?= $l['autor'] ?></td>

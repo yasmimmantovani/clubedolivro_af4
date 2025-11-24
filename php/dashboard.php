@@ -105,7 +105,7 @@ while($g = $queryGenero->fetch_assoc()) {
                         <a class="btn" href="livros.php">+ Cadastrar Livro</a>
                         <a class="btn" href="clientes.php">+ Cadastrar cliente</a>
                         <a class="btn" href="gerar_relatorio.php?tipo=livros" target="_blank">Gerar PDF</a>
-                        <a class="btn" href="export_csv.php?tipo=livros">Exportar CSV</a>
+                        <a class="btn" href="gerar_csv.php?tipo=livros">Exportar CSV</a>
                     </div>
                 </div>
             </section>
@@ -113,7 +113,9 @@ while($g = $queryGenero->fetch_assoc()) {
             <section class="charts">
                 <div class="chart-card">
                     <h3>Visão geral</h3>
-                    <canvas id="overviewChart" height="120"></canvas>
+                    <div class="chart-container">
+                        <canvas id="overviewChart" height="120"></canvas>
+                    </div>
                 </div>
             </section>
 

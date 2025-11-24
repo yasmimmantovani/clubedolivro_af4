@@ -1,15 +1,17 @@
 <?php
-// php/conexao.php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "clubelivro";
+require __DIR__ . "/env.php";
 
-$mysqli = new mysqli($host, $user, $pass, $db);
+loadEnv(__DIR__ . "/../.env");
 
-if ($mysqli->connect_error) {
-    die("Erro ao conectar ao banco: " . $mysqli->connect_error);
+$mysqli = new mysqli (
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS'],
+    $_ENV['DB_NAME']
+);
+
+if ($mysqli->connect_errno) {
+    die("Erro ao conectar ao banco:" . $mysqli->connect_error);
 }
-
 // opcional: define charset
 $mysqli->set_charset("utf8mb4");

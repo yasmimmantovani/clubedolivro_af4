@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS livros (
   ano INT,
   genero VARCHAR(50),
   quantidade INT NOT NULL DEFAULT 1,
+  capa VARCHAR(255) NULL,
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   disponibilidade ENUM('Disponível','Emprestado') DEFAULT 'Disponível'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
