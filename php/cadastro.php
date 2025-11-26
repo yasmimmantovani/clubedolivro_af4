@@ -5,9 +5,32 @@ mysqli_report(MYSQLI_REPORT_OFF);
 $mensagem = "";
 $tipo_msg = "";
 
+function validarCPF($cpf) {
+    $cpf = preg_replace('/\D/', '', $cpf);
+
+    if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+        return false;
+    }
+    for ($t = 9; $t < 11; $t++) {
+        $d = 0;
+        for ($c = 0; $c < $t; $c++) {
+            $d += $cpf[$c] * (($t + 1) - $c);
+        }
+        $d = ((10 * $d) % 11) % 10;
+        if ($cpf[$t] != $d) return false;
+    }
+    return true;
+}
+
+function validarTelefone($telefone) {
+    $telefone = preg_replace('/\D/', '', $telefone);
+    return preg_match('/^[0-9]{10,11}$/', $telefone);
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
+    $cpf = $_POST['cpf'];
     $telefone = $_POST['telefone'];
     $senhaRaw = $_POST['senha'];
     $nivel = $_POST['nivel'];
@@ -15,34 +38,54 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $mensagem = "E-mail inválido! Por favor, insira um e-mail válido.";
         $tipo_msg = "error";
-    } else {
-        $senha = password_hash($senhaRaw, PASSWORD_DEFAULT);
+    } 
+    elseif (!validarCPF($cpf)) {
+        $mensagem = "CPF Inválido! Verifique e tente novamente.";
+        $tipo_msg = "error";
+    }
+    elseif (!validarTelefone($telefone)) {
+        $mensagem = "Telefone inválido! Digite apenas números (10 ou 11 dígitos).";
+        $tipo_msg = "error";
+    }
+    else {
+        $verificar = $mysqli->prepare("select id from usuarios_adm
+                                      where email = ? or cpf = ? or telefone = ?");
 
-        $sql = "insert into usuarios_adm (nome, email, telefone, senha, nivel)
-                values (?, ?, ?, ?, ?)";
+        $verificar->bind_param("sss", $email, $cpf, $telefone);
+        $verificar->execute();
+        $result = $verificar->get_result();
 
-        $stmt = $mysqli->prepare($sql);
-
-        if(!$stmt) {
-            $mensagem = "Erro interno: " . $mysqli->error;
+        if ($result-> num_rows > 0) {
+            $mensagem = "Já existe um usuário com este e-mail, CPF ou telefone.";
             $tipo_msg = "error";
         } else {
-            $stmt->bind_param("sssss", $nome, $email, $telefone, $senha, $nivel);
+            $senha = password_hash($senhaRaw, PASSWORD_DEFAULT);
 
-            if($stmt->execute()) {
-                $mensagem = "Usuário cadastrado com sucesso!";
-                $tipo_msg = "success";
+            $sql = "insert into usuarios_adm(nome, email, cpf, telefone, senha, nivel)
+                    values (?, ?, ?, ?, ?, ?)";
+
+            $stmt = $mysqli->prepare($sql);
+
+            if (!$stmt) {
+                $mensagem = "Erro interno: " . $mysqli->error;
+                $tipo_msg = "error";
             } else {
-                if($mysqli->errno == 1062) {
-                    $mensagem = "Este e-mail já está cadastrado. Tente outro.";
-                    $tipo_msg = "error";
+                $stmt->bind_param("ssssss", $nome, $email, $cpf, $telefone, $senha, $nivel);
+
+                if ($stmt->execute()) {
+                    $mensagem = "Usuário cadastrado com sucesso!";
+                    $tipo_msg = "success";
                 } else {
                     $mensagem = "Erro ao cadastrar: " . $stmt->error;
                     $tipo_msg = "error";
                 }
-            } 
-            $stmt->close();
+
+                $stmt->close();
+
+            }
         }
+
+        $verificar->close();
 
     }
 }
@@ -87,6 +130,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <label for="email"> E-mail:</label>
             <input type="email" id="email" name="email" placeholder="Ex.: fulano@email.com" required>
 
+            <label>CPF:</label>
+            <input type="text" id="cpf" name="cpf" placeholder="Ex.: 123.456.789-10" required>
+ 
             <label for="telefone"> Telefone:</label>
             <input type="text" id="telefone" name="telefone" placeholder="(00) 12345-6789" required>
 
@@ -107,9 +153,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <footer>
         &copy; 2025 BookLover | Desenvolvido por Yasmim Mantovani
         <p>Siga-nos:<br>
-            <a href="#"><ion-icon name="logo-instagram"></ion></a> 
-            <a href="#"><ion-icon name="logo-facebook"></ion-icon></a> 
-            <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+            <a href="https://instagram.com" target="_blank"><ion-icon name="logo-instagram"></ion></a> 
+            <a href="https://facebook.com" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a> 
+            <a href="https://x.com" target="_blank"><ion-icon name="logo-twitter"></ion-icon></a>
         </p>
     </footer>
 
