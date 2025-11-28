@@ -10,6 +10,23 @@ function validarTelefone($telefone) {
     return preg_match('/^[0-9]{10,11}$/', $telefone);
 }
 
+function validarCPF($cpf) {
+    $cpf = preg_replace('/\D/', '', $cpf);
+
+    if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+        return false;
+    }
+    for ($t = 9; $t < 11; $t++) {
+        $d = 0;
+        for ($c = 0; $c < $t; $c++) {
+            $d += $cpf[$c] * (($t + 1) - $c);
+        }
+        $d = ((10 * $d) % 11) % 10;
+        if ($cpf[$t] != $d) return false;
+    }
+    return true;
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
@@ -24,6 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } 
     elseif (!validarTelefone($telefone)) {
         $mensagem = "Telefone inválido! Digite apenas números (10 ou 11 dígitos).";
+        $tipo_msg = "error";
+    }
+    elseif (!validarCPF($cpf)) {
+        $mensagem = "CPF Inválido! Verifique e tente novamente.";
         $tipo_msg = "error";
     }
     else {

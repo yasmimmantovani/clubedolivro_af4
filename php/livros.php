@@ -72,10 +72,14 @@ $busca = $_GET['q'] ?? "";
 $sql = "select * from livros where 1";
 
 if ($busca !== "") {
-    $sql .= " and titulo like '%$busca%'";
+    if (is_numeric($busca)) {
+        $sql .= " and (id_livro = $busca or titulo like '%$busca%')";
+    } else {
+        $sql .= " and (autor like '%$busca%' or genero like '%$busca' or ano like '%$busca%')";
+    }
 }
 
-$sql .= " order by titulo asc";
+$sql .= " order by id_livro desc";
 $dados = $mysqli->query($sql);
 ?>
 

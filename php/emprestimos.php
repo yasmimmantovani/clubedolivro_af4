@@ -2,74 +2,86 @@
 session_start();
 include('conexao.php');
 
-// Cadastrar ou editar
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $id_livro = $_POST['id_livro'];
     $id_clientes = $_POST['id_clientes'];
-    $data_emprestimo = $_POST['data_emprestimo'];
     $data_devolucao = $_POST['data_devolucao'];
 
     if (!empty($_POST['id_emprestimo'])) {
         $id = $_POST['id_emprestimo'];
-        $mysqli->query("update emprestimos set
-                        id_livro='$id_livro',
-                        id_clientes='$id_clientes',
-                        data_emprestimo='$data_emprestimo',
-                        data_devolucao='$data_devolucao'
-                        where id_emprestimo=$id");
+        $mysqli->query("UPDATE emprestimos SET
+                        id_livro = '$id_livro',
+                        id_clientes = '$id_clientes',
+                        data_devolucao = '$data_devolucao'
+                        WHERE id_emprestimo = $id");
     } else {
-        $mysqli->query("insert into emprestimos(id_livro, id_clientes, data_emprestimo, data_devolucao, status)
-                        values('$id_livro', '$id_clientes', NOW(), '$data_devolucao', 'Ativo')");
 
-        $mysqli->query("update livros
-                        set quantidade = quantidade - 1
-                        where id_livro=$id_livro");
+        $query = $mysqli->prepare("SELECT quantidade FROM livros WHERE id_livro = ?");
+        $query->bind_param("i", $id_livro);
+        $query->execute();
+        $result = $query->get_result();
+        $livro = $result->fetch_assoc();
 
-        $mysqli->query("update livros
-                        set disponibilidade = if(quantidade > 0, 'Disponível', 'Emprestado')
-                        where id_livro = $id_livro");
+        if ($livro['quantidade'] <= 0) {
+            $_SESSION['mensagem'] = "Este livro está indisponível para empréstimo.";
+            $_SESSION['tipo_msg'] = "error";
+
+            header("Location: emprestimos.php");
+            exit;
+        }
+
+        $mysqli->query("INSERT INTO emprestimos
+                        (id_livro, id_clientes, data_emprestimo, data_devolucao, status)
+                        VALUES ('$id_livro', '$id_clientes', NOW(), '$data_devolucao', 'Ativo')");
+
+        $mysqli->query("UPDATE livros
+                        SET quantidade = quantidade - 1
+                        WHERE id_livro = $id_livro");
+
+        $mysqli->query("UPDATE livros
+                        SET disponibilidade = IF(quantidade > 0, 'Disponível', 'Emprestado')
+                        WHERE id_livro = $id_livro");
     }
     header("Location: emprestimos.php");
     exit;
 }
 
-// Excluir
-if(isset($_GET['del'])) {
+if (isset($_GET['del'])) {
+
     $id = (int)$_GET['del'];
 
-    $res = $mysqli->query("SELECT id_livro FROM emprestimos WHERE id_emprestimo=$id");
+    $res = $mysqli->query("SELECT id_livro FROM emprestimos WHERE id_emprestimo = $id");
     $row = $res->fetch_assoc();
     $id_livro = $row['id_livro'];
 
-    $mysqli->query("delete from emprestimos where id_emprestimo=$id");
-    header("Location: emprestimos.php");
+    $mysqli->query("DELETE FROM emprestimos WHERE id_emprestimo = $id");
 
     $mysqli->query("UPDATE livros 
                     SET quantidade = quantidade + 1
                     WHERE id_livro = $id_livro");
 
     $mysqli->query("UPDATE livros 
-                    SET status = IF(quantidade > 0, 'Disponível', 'Indisponível')
+                    SET disponibilidade = IF(quantidade > 0, 'Disponível', 'Emprestado')
                     WHERE id_livro = $id_livro");
 
     header("Location: emprestimos.php");
     exit;
 }
 
-// Devolver
-if(isset($_GET['dev'])) {
+if (isset($_GET['dev'])) {
+
     $id = (int)$_GET['dev'];
 
-
-    $res = $mysqli->query("SELECT id_livro FROM emprestimos WHERE id_emprestimo=$id");
+    $res = $mysqli->query("SELECT id_livro FROM emprestimos WHERE id_emprestimo = $id");
     $row = $res->fetch_assoc();
     $id_livro = $row['id_livro'];
 
 
     $mysqli->query("UPDATE emprestimos 
-                    SET status='Devolvido',
-                    data_devolucao = NOW()
-                    WHERE id_emprestimo=$id");
+                    SET status = 'Devolvido',
+                        data_devolucao = NOW()
+                    WHERE id_emprestimo = $id");
 
 
     $mysqli->query("UPDATE livros 
@@ -85,23 +97,21 @@ if(isset($_GET['dev'])) {
     exit;
 }
 
-// Buscar para editar
 $edit = null;
 if (isset($_GET['edit'])) {
     $id = (int)$_GET['edit'];
-    $res = $mysqli->query("select * from emprestimos where id_emprestimo=$id limit 1");
+    $res = $mysqli->query("SELECT * FROM emprestimos WHERE id_emprestimo = $id LIMIT 1");
     $edit = $res->fetch_assoc();
 }
 
-// Listar com pesquisa
 $busca = $_GET['q'] ?? "";
-$sql = "select * from emprestimos where 1";
+$sql = "SELECT * FROM emprestimos WHERE 1";
 
 if ($busca !== "") {
-    $sql .= " and id_emprestimo like '%$busca%'";
+    $sql .= " AND (id_emprestimo LIKE '%$busca%')";
 }
 
-$sql .= " order by id_emprestimo asc";
+$sql .= " ORDER BY id_emprestimo DESC";
 $dados = $mysqli->query($sql);
 ?>
 
@@ -216,6 +226,23 @@ $dados = $mysqli->query($sql);
             </div>
         </div>
     </div>
+
+    <!-- Script do Modal -->
+    <?php if (!empty($_SESSION['mensagem'])): ?>
+    <div class="modal-bg" id="modal">
+        <div class="modal <?= $_SESSION['tipo_msg'] ?>">
+            <p><?= $_SESSION['mensagem'] ?></p>
+
+            <button onclick="document.getElementById('modal').remove();">OK</button>
+        </div>
+    </div>
+
+    <?php
+        unset($_SESSION['mensagem']);
+        unset($_SESSION['tipo_msg']);
+    ?>
+    <?php endif; ?>
+
         
 
     <!-- Tema -->

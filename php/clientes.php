@@ -38,7 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Excluir
 if(isset($_GET['del'])) {
     $id = (int)$_GET['del'];
-    $mysqli->query("delete from clientes where id_clientes=$id");
+    $consulta = $mysqli->prepare("select id_emprestimo
+                                  from emprestimos
+                                  where id_clientes = ?
+                                  and status = 'Ativo'");
+
+    $consulta->bind_param("i", $id);
+    $consulta->execute();
+    $res = $consulta->get_result();
+
+    if ($res->num_rows > 0) {
+        $_SESSION['mensagem'] = "Este cliente possui empréstimos em aberto e não pode ser excluído.";
+        $_SESSION['tipo_msg'] = "error";
+
+        header("Location: clientes.php");
+        exit;
+    }
+    $mysqli->query("delete from clientes where id_clientes = $id");
+    $mensagem = "Cliente excluído com sucesso.";
+    $tipo_msg = "success";
     header("Location: clientes.php");
     exit;
 }
@@ -56,10 +74,14 @@ $busca = $_GET['q'] ?? "";
 $sql = "select * from clientes where 1";
 
 if ($busca !== "") {
-    $sql .= " and nome like '%$busca%'";
+    if (is_numeric($busca)) {
+        $sql .= " and (id_clientes = $busca or nome like '%$busca%')";
+    } else {
+        $sql .= " and (nome like '%$busca%' or email like '%$busca' or cidade like '%$busca%')";
+    }
 }
 
-$sql .= " order by nome asc";
+$sql .= " order by nome desc";
 $dados = $mysqli->query($sql);
 ?>
 
@@ -209,6 +231,22 @@ $dados = $mysqli->query($sql);
             </div>
         </div>
      </div>
+
+     <!-- Script do Modal -->
+    <?php if (!empty($_SESSION['mensagem'])): ?>
+    <div class="modal-bg" id="modal">
+        <div class="modal <?= $_SESSION['tipo_msg'] ?>">
+            <p><?= $_SESSION['mensagem'] ?></p>
+
+            <button onclick="document.getElementById('modal').remove();">OK</button>
+        </div>
+    </div>
+
+    <?php
+        unset($_SESSION['mensagem']);
+        unset($_SESSION['tipo_msg']);
+    ?>
+    <?php endif; ?>
         
 
     <!-- Tema -->
