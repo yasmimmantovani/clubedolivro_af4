@@ -14,6 +14,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cidade = $_POST['cidade'];
     $estado = $_POST['estado'];
 
+    $verificaEmail = $mysqli->prepare(
+        "SELECT id_clientes FROM clientes WHERE email = ? AND id_clientes != ?"
+    );
+    $idAtual = $_POST['id_clientes'] ?? 0;
+    $verificaEmail->bind_param("si", $email, $idAtual);
+    $verificaEmail->execute();
+    $resEmail = $verificaEmail->get_result();
+
+    if ($resEmail->num_rows > 0) {
+        $_SESSION['mensagem'] = "Este e-mail já está cadastrado para outro cliente.";
+        $_SESSION['tipo_msg'] = "error";
+
+        header("Location: clientes.php");
+        exit;
+    }
+
     if (!empty($_POST['id_clientes'])) {
         $id = $_POST['id_clientes'];
         $mysqli->query("update clientes set
