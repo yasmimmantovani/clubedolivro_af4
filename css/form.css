@@ -38,6 +38,10 @@ body {
     min-height: 100vh;
 }
 
+main {
+    flex: 1;
+}
+
 header {
     background-color: var(--main-color);
     color: var(--texto2);
@@ -190,7 +194,6 @@ footer {
     padding: 10px;
     font-size: 0.9rem;
     bottom: 0;
-    position: fixed;
     width: 100%;
 }
 

@@ -62,64 +62,61 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="shortcut icon" href="../img/pngegg.png">
 </head>
 <body>
+    <header>
+        <h1>BookLover</h1>
+        <nav>
+            <a href="../html/index.html">Início</a>
+            <a href="../html/index.html#destaque">Destaques</a>
+            <a href="cadastro.php">Seja um Lover</a>
+        </nav>
 
-<header>
-    <h1>BookLover</h1>
-    <nav>
-        <a href="../html/index.html">Início</a>
-        <a href="../html/index.html#destaque">Destaques</a>
-        <a href="cadastro.php">Seja um Lover</a>
-    </nav>
-
-    <div class="header-right">
-        <button class="tema" id="tema">
-            <ion-icon name="moon-outline"></ion-icon>
-        </button>
-    </div>
-</header>
-
-<div class="container">
-    <h2>Login</h2>
-
-    <form method="POST">
-
-        <label for="email">E-mail:</label>
-        <input type="email" name="email" placeholder="Digite seu e-mail" required>
-
-        <label for="senha">Senha:</label>
-        <input type="password" name="senha" placeholder="Digite sua senha" required>
-
-        <button type="submit" class="botao">Entrar</button>
-
-    </form>
-</div>
-
-<footer>
-    &copy; 2025 BookLover | Desenvolvido por Yasmim Mantovani
-    <p>Siga-nos:<br>
-        <a href="https://instagram.com" target="_blank"><ion-icon name="logo-instagram"></ion></a> 
-        <a href="https://github.com/yasmimmantovani" target="_blank"><ion-icon name="logo-github"></ion-icon></a> 
-            <a href="https://www.linkedin.com/in/yasmim-mantovani/" target="_blank"><ion-icon name="logo-linkedin"></ion-icon></a>
-    </p>
-</footer>
-
-<!-- Scripts -->
-<script src="../js/theme.js"></script>
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-<?php if(!empty($mensagem)) : ?>
-    <div class="modal-bg" id="modal">
-        <div class="modal <?= $tipo_msg ?>">
-            <p><?= $mensagem ?></p>
-            <?php if($tipo_msg === "success") : ?>
-                <button onclick="window.location.href='dashboard.php'">OK</button>
-            <?php else : ?>
-                <button onclick="document.getElementById('modal').remove();">OK</button>
-            <?php endif; ?>
+        <div class="header-right">
+            <button class="tema" id="tema">
+                <ion-icon name="moon-outline"></ion-icon>
+            </button>
         </div>
-    </div>
-<?php endif; ?>
+    </header>
 
+    <main>
+        <div class="container">
+            <h2>Login</h2>
+            <form method="POST">
+                <label for="email">E-mail:</label>
+                <input type="email" name="email" placeholder="Digite seu e-mail" required>
+
+                <label for="senha">Senha:</label>
+                <input type="password" name="senha" placeholder="Digite sua senha" required>
+
+                <button type="submit" class="botao">Entrar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 BookLover | Desenvolvido por Yasmim Mantovani
+        <p>Siga-nos:<br>
+            <a href="https://instagram.com" target="_blank"><ion-icon name="logo-instagram"></ion></a> 
+            <a href="https://github.com/yasmimmantovani" target="_blank"><ion-icon name="logo-github"></ion-icon></a> 
+            <a href="https://www.linkedin.com/in/yasmim-mantovani/" target="_blank"><ion-icon name="logo-linkedin"></ion-icon></a>
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/theme.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <?php if(!empty($mensagem)) : ?>
+        <div class="modal-bg" id="modal">
+            <div class="modal <?= $tipo_msg ?>">
+                <p><?= $mensagem ?></p>
+                <?php if($tipo_msg === "success") : ?>
+                    <button onclick="window.location.href='dashboard.php'">OK</button>
+                <?php else : ?>
+                    <button onclick="document.getElementById('modal').remove();">OK</button>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 </body>
 </html>
